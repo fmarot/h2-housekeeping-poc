@@ -36,7 +36,7 @@ public class Database {
 	public Database(Path storageDir) throws SQLException {
 		this.storageDir = storageDir;
 		storageDir.toFile().mkdirs();
-		String url = "jdbc:h2:" + storageDir + "/poc" + ";RETENTION_TIME=0;MAX_COMPACT_TIME=20000;AUTO_COMPACT_FILL_RATE=80";//;DATABASE_EVENT_LISTENER=com.oleamedical.databasemigrator.poc_h2.DBEventListener";
+		String url = "jdbc:h2:" + storageDir + "/poc" + ";RETENTION_TIME=0;MAX_COMPACT_TIME=20000;AUTO_COMPACT_FILL_RATE=70";//;DATABASE_EVENT_LISTENER=com.oleamedical.databasemigrator.poc_h2.DBEventListener";
 		pool = JdbcConnectionPool.create(url, "login", "pass");
 		createDatabase();
 	}
