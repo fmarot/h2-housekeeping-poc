@@ -1,0 +1,35 @@
+Dedicated poc to try to understand H2 housepkeeping mechanism
+=============================================================
+:toc: macro
+
+toc::[]
+
+Dedicated poc to try to understand H2 housepkeeping mechanism
+
+== How to run
+
+-------------------------------------------
+mvn clean package && java -cp "target/h2-poc-0.1-SNAPSHOT.jar;target/lib/*" com.teamtter.h2.poc.Main ./target/DB
+-------------------------------------------
+
+
+== What is "the payload"
+
+I call the "payload" the set of blobs that are put in the DB and not deleted yet.
+In an ideal world the DB filesize closely matches the payload size.
+
+I heard about an housekeeping mechanism in H2 and though the DB file would regularly be shrinked to the payloas size. But it does not seem to work in my case.
+
+== What does it do ?
+
+the program runs for some time:
+ - one thread creates blobs of random size and add the continuously to the DB
+ - one thread starts to delete random blobs when the payload is above a given size (*) in order to always stay around the given size
+
+(*) see LOBDeletorWithtargetSize, by default 30Go
+
+When the H2 file starts to be larger than twice the payload, both threads are paused.
+
+I hoped that after some time I would see H2's housekeeping mechanism being triggered and that the
+DB would start to shrink to be reduced to more or less the payload size.
+But it never kicked in and I cannot understand how and if the DB file should shrink itself down to the payload size.

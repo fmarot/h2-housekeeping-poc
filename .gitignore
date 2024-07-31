@@ -1,0 +1,8 @@
+/target/
+/.settings/
+/.project
+.factorypath
+dependency-reduced-pom.xml
+.classpath
+*.log
+.flattened-pom.xml
