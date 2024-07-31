@@ -4,7 +4,7 @@ Dedicated poc to try to understand H2 housepkeeping mechanism
 
 toc::[]
 
-Dedicated poc to try to understand H2 housepkeeping mechanism
+Dedicated poc to try to understand H2 housepkeeping mechanism following an issue opened on the H2 project here: https://github.com/h2database/h2database/issues/4096
 
 == How to run
 
