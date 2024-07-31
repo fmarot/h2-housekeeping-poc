@@ -29,15 +29,22 @@ public class Producer implements Callable<Void> {
 
 			if (db.fileIsTwiceLargerThanPayload()) {
 				sema.acquire();
-				// wait a lot (16 minutes)
-				log.info("fileIsTwiceLargerThanPayload => will wait 16 minutes");
-				int sleepFor = 16 * 60 * 1000; // sleep 16 minutes
-				Thread.sleep(sleepFor);
-				log.info("fileIsTwiceLargerThanPayload => DONE wait 16 minutes");
-				sema.release();
+				// wait a bit to try to trigger idle H2 and housekeeping
+				int sleepDurationInMinutes = 6;
+				log.info("fileIsTwiceLargerThanPayload => will wait {} minutes", sleepDurationInMinutes);
+				int sleepDurationInMs = sleepDurationInMinutes * 60 * 1000;
+				Thread.sleep(sleepDurationInMs);
+				log.info("fileIsTwiceLargerThanPayload => DONE wait {} minutes", sleepDurationInMinutes);
+				//sema.release();
+
+				db.displayInfos();
+				Thread.sleep(5_000);
+				db.shutdown();
+				log.info("Will exit now...");
+				System.exit(0);	// EXIT PROGRAMM
 			} else {
 				// wait a bit
-				int sleepFor = rand.nextInt(1000); // sleep up to 1minutes
+				int sleepFor = rand.nextInt(400); // sleep a bit, in ms
 				Thread.sleep(sleepFor);
 			}
 		}

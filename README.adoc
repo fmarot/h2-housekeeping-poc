@@ -8,11 +8,17 @@ Dedicated poc to try to understand H2 housepkeeping mechanism following an issue
 
 == How to run
 
-You need Maven and Java 17
+You need Maven and Java 17 and run with either of the methods:
 
--------------------------------------------
+--------------------
+mvn compile exec:java
+--------------------
+
+--------------------
 mvn clean package && java -cp "target/h2-housekeeping-poc-0.1-SNAPSHOT.jar;target/lib/*" com.teamtter.h2.poc.Main ./target/DB
--------------------------------------------
+--------------------
+
+
 
 
 == What is "the payload"

@@ -14,7 +14,7 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 
 		Path storageDir;
-		if(args.length>0) {
+		if (args.length > 0) {
 			// when run from command line, you can specify a DB path
 			storageDir = Path.of(args[0]);
 		} else {
@@ -27,14 +27,14 @@ public class Main {
 
 		ExecutorService executorService = Executors.newFixedThreadPool(5);
 		// This Semaphore prevents the deletor to work while the Producer is idle
-		// in order to ensure the DB receives ither read nor write requests (and maybe
+		// in order to ensure the DB receives neither read nor write requests (and maybe
 		// will be considered idle, who knows...)
-		Semaphore sema = new Semaphore(1);
+		Semaphore semaphore = new Semaphore(1);
 
-		Producer producer = new Producer(lobCreator, db, sema);
+		Producer producer = new Producer(lobCreator, db, semaphore);
 		executorService.submit(producer);
 
-		LOBDeletorWithtargetSize lobDeletor = new LOBDeletorWithtargetSize(db, 30, 2, sema);
+		LOBDeletorWithtargetSize lobDeletor = new LOBDeletorWithtargetSize(db, 30, 1, semaphore);
 		Future<Void> futureDeletor = executorService.submit(lobDeletor);
 		futureDeletor.get();	// just wait and stay in main thread
 

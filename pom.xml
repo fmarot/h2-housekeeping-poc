@@ -49,6 +49,9 @@
 	<build>
 		<plugins>
 			<plugin>
+				<!-- copy dependencies to target/lib dir so that you can run the programm like this:
+				 mvn clean package && java -cp "target/h2-housekeeping-poc-0.1-SNAPSHOT.jar;target/lib/*"
+				com.teamtter.h2.poc.Main ./target/DB -->
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
 					<execution>
@@ -61,6 +64,28 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.3.0</version>
+				<executions>
+					<execution>
+						<id>execjava</id>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<includeProjectDependencies>true</includeProjectDependencies>
+					<includePluginDependencies>false</includePluginDependencies>
+					<mainClass>com.teamtter.h2.poc.Main</mainClass>
+					<arguments>
+						<argument>${project.build.directory}/DB</argument>
+					</arguments>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

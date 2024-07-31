@@ -36,7 +36,7 @@ public class Database {
 	public Database(Path storageDir) throws SQLException {
 		this.storageDir = storageDir;
 		storageDir.toFile().mkdirs();
-		String url = "jdbc:h2:" + storageDir + "/poc" + ";RETENTION_TIME=0;MAX_COMPACT_TIME=20000";//;DATABASE_EVENT_LISTENER=com.oleamedical.databasemigrator.poc_h2.DBEventListener";
+		String url = "jdbc:h2:" + storageDir + "/poc" + ";RETENTION_TIME=0;MAX_COMPACT_TIME=20000;AUTO_COMPACT_FILL_RATE=80";//;DATABASE_EVENT_LISTENER=com.oleamedical.databasemigrator.poc_h2.DBEventListener";
 		pool = JdbcConnectionPool.create(url, "login", "pass");
 		createDatabase();
 	}
@@ -74,7 +74,7 @@ public class Database {
 				PreparedStatement prepStmt = conn.prepareStatement(deleteStmt)) {
 			prepStmt.setLong(1, idToDelete);
 			int nbRowsDeleted = prepStmt.executeUpdate();
-			log.info("nb rows deleted: {}", nbRowsDeleted);
+			log.debug("nb rows deleted: {}", nbRowsDeleted);
 		}
 	}
 
@@ -103,9 +103,11 @@ public class Database {
 	public void shutdown() {
 		String statement = "SHUTDOWN COMPACT";
 		try (Connection conn = getConnection();) {
+			displayInfos();
 			log.info("Shutting down");
 			int result = conn.createStatement().executeUpdate(statement);
 			log.info("Shut down");
+			log.info("Final size on the disk after shutdown defrag: {}MB", computeDBSizeOnFilesystemInMB());
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
