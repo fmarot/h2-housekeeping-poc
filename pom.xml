@@ -9,7 +9,8 @@
 	<version>0.1-SNAPSHOT</version>
 
 	<properties>
-		<H2Version>2.3.230</H2Version>
+		<H2Version>2.3.232</H2Version>
+		<!-- <H2Version>2.3.230</H2Version> -->
 		<!-- <H2Version>2.2.222</H2Version> -->
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
