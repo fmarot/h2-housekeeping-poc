@@ -27,14 +27,14 @@ public class Producer implements Callable<Void> {
 			int lobSize = rand.nextInt(1000); // lob up to 1Go
 			lobCreator.insertRandomLob(lobSize);
 
-			if (db.fileIsTwiceLargerThanPayload()) {
+			if (db.DBfileIsTwiceLargerThanPayload()) {
 				sema.acquire();
 				// wait a bit to try to trigger idle H2 and housekeeping
 				int sleepDurationInMinutes = 6;
-				log.info("fileIsTwiceLargerThanPayload => will wait {} minutes", sleepDurationInMinutes);
+				log.info("DBfileIsTwiceLargerThanPayload => will wait {} minutes", sleepDurationInMinutes);
 				int sleepDurationInMs = sleepDurationInMinutes * 60 * 1000;
 				Thread.sleep(sleepDurationInMs);
-				log.info("fileIsTwiceLargerThanPayload => DONE wait {} minutes", sleepDurationInMinutes);
+				log.info("DBfileIsTwiceLargerThanPayload => DONE wait {} minutes", sleepDurationInMinutes);
 				//sema.release();
 
 				db.displayInfos();
