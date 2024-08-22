@@ -12,8 +12,9 @@ public class LOBCreator {
 	}
 
 	public void insertRandomLob(int lengthInMB) {
-		byte[] blob = new byte[lengthInMB * 1024 * 1024];
-		for (int i = 0; i < lengthInMB; i++) {
+		int lengthInBytes = lengthInMB * 1024 * 1024;
+		byte[] blob = new byte[lengthInBytes];
+		for (int i = 0; i < lengthInBytes; i++) {
 			byte rand = (byte) ((int) (Math.random() * 255) - 128);
 			blob[i] = rand;
 		}
