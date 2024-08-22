@@ -44,7 +44,7 @@ public class Database {
 
 	private void initPool() {
 		// DB_CLOSE_ON_EXIT=0 seems required because we close it manually with SHUTDOWN. Otherwise H2 creates a poc.trace.db containing an exception "Database is already closed"
-		String url = "jdbc:h2:" + this.storageDir + "/poc" + ";RETENTION_TIME=0;DB_CLOSE_ON_EXIT=0;MAX_COMPACT_TIME=20000;AUTO_COMPACT_FILL_RATE=70";
+		String url = "jdbc:h2:" + this.storageDir + "/poc" + ";RETENTION_TIME=0;DB_CLOSE_ON_EXIT=FALSE;MAX_COMPACT_TIME=20000;AUTO_COMPACT_FILL_RATE=70";
 		pool = JdbcConnectionPool.create(url, "login", "pass");
 	}
 
