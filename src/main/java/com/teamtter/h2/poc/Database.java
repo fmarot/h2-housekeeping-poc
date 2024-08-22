@@ -1,6 +1,8 @@
 package com.teamtter.h2.poc;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -36,9 +38,34 @@ public class Database {
 	public Database(Path storageDir) throws SQLException {
 		this.storageDir = storageDir;
 		storageDir.toFile().mkdirs();
-		String url = "jdbc:h2:" + storageDir + "/poc" + ";RETENTION_TIME=0;MAX_COMPACT_TIME=20000;AUTO_COMPACT_FILL_RATE=70";
-		pool = JdbcConnectionPool.create(url, "login", "pass");
+		initPool();
 		createDatabase();
+	}
+
+	private void initPool() {
+		// DB_CLOSE_ON_EXIT=0 seems required because we close it manually with SHUTDOWN. Otherwise H2 creates a poc.trace.db containing an exception "Database is already closed"
+		String url = "jdbc:h2:" + this.storageDir + "/poc" + ";RETENTION_TIME=0;DB_CLOSE_ON_EXIT=0;MAX_COMPACT_TIME=20000;AUTO_COMPACT_FILL_RATE=70";
+		pool = JdbcConnectionPool.create(url, "login", "pass");
+	}
+
+	/** debugging method which exports all files from the DB to the filesystem */
+	public void reopenDBAndExportData() {
+		initPool();
+		String query = "SELECT * FROM the_table";
+		try (PreparedStatement ps = getConnection().prepareStatement(query)) {
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				int id = rs.getInt("ID");
+				int size = rs.getInt("BLOBLENGTH_MB");
+				log.info("Will write file {} of size {}MB", id, size);
+				try (InputStream stream = rs.getBinaryStream(3)) {
+					FileUtils.copyInputStreamToFile(stream, new File(storageDir.toFile(), "" + id));
+				}
+			}
+			rs = ps.executeQuery();
+		} catch (Exception e) {
+			log.error("", e);
+		}
 	}
 
 	public Connection getConnection() throws SQLException {
@@ -108,6 +135,7 @@ public class Database {
 			int result = conn.createStatement().executeUpdate(statement);
 			log.info("Shut down");
 			log.info("Final size on the disk after shutdown defrag: {}MB", computeDBSizeOnFilesystemInMB());
+			reopenDBAndExportData();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
