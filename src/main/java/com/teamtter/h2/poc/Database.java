@@ -52,7 +52,7 @@ public class Database {
 	public void reopenDBAndExportData() {
 		initPool();
 		String query = "SELECT * FROM the_table";
-		try (PreparedStatement ps = getConnection().prepareStatement(query)) {
+		try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				int id = rs.getInt("ID");
